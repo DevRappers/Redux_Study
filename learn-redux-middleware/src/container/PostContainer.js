@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Post from '../components/Post';
-import { getPost } from '../modules/posts';
+import { getPost, clearPost } from '../modules/posts';
 
 function PostContainer({ postId }) {
 	const { data, loading, error } = useSelector((state) => state.posts.post);
@@ -10,6 +10,9 @@ function PostContainer({ postId }) {
 	useEffect(
 		() => {
 			dispatch(getPost(postId));
+			return () => {
+				dispatch(clearPost());
+			};
 		},
 		[ postId, dispatch ]
 	);
