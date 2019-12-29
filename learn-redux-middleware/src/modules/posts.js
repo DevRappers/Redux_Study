@@ -6,7 +6,7 @@ import {
 	createPromiseSaga,
 	createPromiseSagaById
 } from '../lib/asyncUtils';
-import { takeEvery, getContext } from 'redux-saga/effects';
+import { takeEvery, getContext, select } from 'redux-saga/effects';
 
 /* 액션 타입 */
 
@@ -20,12 +20,19 @@ const GET_POST = 'GET_POST';
 const GET_POST_SUCCESS = 'GET_POST_SUCCESS';
 const GET_POST_ERROR = 'GET_POST_ERROR';
 const GO_TO_HOME = 'GO_TO_HOME';
+const PRINT_STATE = 'PRINT_STATE';
 
 export const getPosts = () => ({ type: GET_POSTS });
 export const getPost = (id) => ({ type: GET_POST, payload: id, meta: id });
 function* goToHomeSaga() {
 	const history = yield getContext('history');
 	history.push('/');
+}
+export const printState = () => ({ type: PRINT_STATE });
+
+function* printStateSaga() {
+	const state = yield select((state) => state.posts);
+	console.log(state);
 }
 
 const getPostsSaga = createPromiseSaga(GET_POSTS, postsAPI.getPosts);
@@ -35,6 +42,7 @@ export function* postsSaga() {
 	yield takeEvery(GET_POSTS, getPostsSaga);
 	yield takeEvery(GET_POST, getPostSaga);
 	yield takeEvery(GO_TO_HOME, goToHomeSaga);
+	yield takeEvery(PRINT_STATE, printStateSaga);
 }
 
 // initialState 쪽도 반복되는 코드를 initial() 함수를 사용해서 리팩토링 했습니다.
